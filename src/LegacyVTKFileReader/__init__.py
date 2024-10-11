@@ -80,12 +80,7 @@ class LegacyVTKFileReader(FileReaderInterface):
 
             # Convert scalar values into a numpy array
             field_data = np.array(scalars)
-            #assert len(field_data) == num_points
-
-            # Optionally reshape the scalars array to match the grid dimensions
-            if dimensions:
-                field_data = field_data.reshape(dimensions)
-           
+            
             # Create a new SimulationCell object defining the outer spatial dimensions
             # of the grid and the boundary conditions, and add it to the DataCollection:
             cell = data.create_cell(
@@ -98,9 +93,10 @@ class LegacyVTKFileReader(FileReaderInterface):
                 identifier="density_field",
                 domain=cell,
                 shape=(nx,ny,nz),
-                vis=VoxelGridVis(enabled=True, transparency=0.6)
-            )
+                vis_params = { "enabled": True})
+
             if self.grid_type == LegacyVTKFileReader.GridType.POINTDATA:
                 grid.grid_type = VoxelGrid.GridType.PointData
                 
-            grid.create_property('Field Value', data=field_data.flatten(order='F'))
+            grid.create_property('Field Value', data=field_data)
+            
